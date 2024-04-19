@@ -26,6 +26,6 @@ export class AppController {
 
   @Get('/test')
   getAlgo(): Observable<any> {
-    return this.client.send<any>('process_order', { item: randomInt(10) });
+    return this.client.send<any>('process_order', '');
   }
 }

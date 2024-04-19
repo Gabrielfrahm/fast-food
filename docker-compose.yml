@@ -2,7 +2,6 @@ version: '3.8'
 services:
   rabbitmq:
     image: rabbitmq:3-management
-    container_name: fast-food-rabbitmq
     ports:
       - "5672:5672" # Porta padrão do RabbitMQ
       - "15672:15672" # Porta da interface web do RabbitMQ
@@ -16,7 +15,6 @@ services:
 
   db:
     image: postgres:latest
-    container_name: fast-food-db
     ports:
       - "5432:5432"
     environment:
@@ -33,7 +31,6 @@ services:
 
   orders-app:
     build: ./orders
-    container_name: fast-food-orders
     ports:
       - "3333:3333"
     environment:
@@ -47,7 +44,6 @@ services:
 
   kitchen-app:
     build: ./kitchen
-    container_name: fast-food-kitchen
     ports:
       - "3334:3334"
     environment:
@@ -55,6 +51,7 @@ services:
     volumes:
       - ./kitchen:/usr/src/app
     depends_on:
+      - db
       - rabbitmq
 
 volumes:

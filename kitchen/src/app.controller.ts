@@ -6,6 +6,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
+import { randomInt } from 'crypto';
 
 @Controller()
 export class AppController {
@@ -21,7 +22,8 @@ export class AppController {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
     console.log(data);
+
     await channel.ack(originalMsg);
-    return { data };
+    return randomInt(10);
   }
 }
