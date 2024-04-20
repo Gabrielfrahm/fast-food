@@ -4,7 +4,7 @@ import { ItemEntity } from './item.entity';
 
 export interface OrderEntityProps extends BaseEntityProps {
   items: ItemEntity[];
-  price: number;
+  price?: number;
   clientName: string;
 }
 
@@ -15,6 +15,9 @@ export class OrderEntity extends BaseEntity {
 
   private constructor(data: OrderEntityProps) {
     super(data);
+    if (data.items) {
+      this.price = data.items.reduce((acc, item) => acc + item.getPrice(), 0);
+    }
   }
 
   static createNew(
@@ -54,5 +57,22 @@ export class OrderEntity extends BaseEntity {
       updatedAt: this.updatedAt,
       deletedAt: this.deletedAt,
     };
+  }
+
+  addItem([...item]: ItemEntity[]): void {
+    this.items.push(...item);
+    this.price = this.items.reduce((acc, item) => acc + item.getPrice(), 0);
+  }
+
+  getItems(): ItemEntity[] {
+    return this.items;
+  }
+
+  getPrice(): number {
+    return this.price;
+  }
+
+  getClient(): string {
+    return this.clientName;
   }
 }

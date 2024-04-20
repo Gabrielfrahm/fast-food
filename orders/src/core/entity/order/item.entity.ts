@@ -47,4 +47,12 @@ export class ItemEntity extends BaseEntity {
       deletedAt: this.deletedAt,
     };
   }
+
+  getName(): string {
+    return this.name;
+  }
+
+  getPrice(): number {
+    return this.price;
+  }
 }
