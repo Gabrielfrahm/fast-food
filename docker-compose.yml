@@ -2,6 +2,8 @@ version: '3.8'
 services:
   rabbitmq:
     image: rabbitmq:3-management
+    networks:
+      - fast-food
     ports:
       - "5672:5672" # Porta padrão do RabbitMQ
       - "15672:15672" # Porta da interface web do RabbitMQ
@@ -15,6 +17,8 @@ services:
 
   db:
     image: postgres:latest
+    networks:
+      - fast-food
     ports:
       - "5432:5432"
     environment:
@@ -22,9 +26,9 @@ services:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - fast_food_db_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ 'CMD-SHELL', 'pg_isready -U fast-food' ]
+      test: [ 'CMD-SHELL', 'pg_isready -U user -d fast-food' ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -38,6 +42,8 @@ services:
       RABBITMQ_URL: amqp://user:password@rabbitmq
     volumes:
       - ./orders:/usr/src/app
+    networks:
+      - fast-food
     depends_on:
       - db
       - rabbitmq
@@ -50,10 +56,17 @@ services:
       RABBITMQ_URL: amqp://user:password@rabbitmq
     volumes:
       - ./kitchen:/usr/src/app
+    networks:
+      - fast-food
     depends_on:
       - db
       - rabbitmq
 
 volumes:
   rabbitmq_data:
-  db_data:
+  fast_food_db_data:
+
+
+networks:
+  fast-food:
+    driver: bridge
