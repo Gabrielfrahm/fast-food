@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Either, left, right } from 'src/shared/either';
 import { ItemEntity } from 'src/core/domain/entity/order/item.entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ItemRepository {
   private readonly model: PrismaService['item'];
+
+  constructor(prismaService: PrismaService) {
+    this.model = prismaService.item;
+  }
 
   async create(item: ItemEntity): Promise<Either<Error, ItemEntity>> {
     try {
@@ -15,7 +20,7 @@ export class ItemRepository {
         },
       });
       if (checkItemAlreadyExist) {
-        left(new Error('Item Already existing'));
+        return left(new Error('Item Already existing'));
       }
 
       await this.model.create({
@@ -31,6 +36,14 @@ export class ItemRepository {
       return right(item);
     } catch (e) {
       return left(e);
+    }
+  }
+
+  async clear(): Promise<Either<Error, Prisma.BatchPayload>> {
+    try {
+      return right(await this.model.deleteMany());
+    } catch (error) {
+      return left(error);
     }
   }
 }
