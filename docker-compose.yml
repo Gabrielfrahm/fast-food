@@ -38,7 +38,6 @@ services:
     ports:
       - "3333:3333"
     environment:
-      DATABASE_URL: postgres://user:password@db/dbname
       RABBITMQ_URL: amqp://user:password@rabbitmq
     volumes:
       - ./orders:/usr/src/app

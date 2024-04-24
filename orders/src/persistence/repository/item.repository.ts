@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Either, left, right } from 'src/shared/either';
 import { ItemEntity } from 'src/core/domain/entity/order/item.entity';
 import { Prisma } from '@prisma/client';
+import { PersistenceException } from 'src/core/domain/exception/persistem.exception';
 
 @Injectable()
 export class ItemRepository {
@@ -20,7 +21,7 @@ export class ItemRepository {
         },
       });
       if (checkItemAlreadyExist) {
-        return left(new Error('Item Already existing'));
+        return left(new PersistenceException('item already existing', 403));
       }
 
       await this.model.create({
