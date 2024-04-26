@@ -9,7 +9,6 @@ export class OrdersService {
 
   async sendOrder(order: any) {
     console.log('publicado');
-
     return this.client.emit<any>('process_order', order);
   }
 }

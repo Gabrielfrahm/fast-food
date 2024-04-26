@@ -40,4 +40,5 @@ model OrderItems {
   createdAt DateTime @default(now())
 
   @@id([orderId, itemId])
+  @@map("order_items")
 }

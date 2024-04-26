@@ -1,9 +1,10 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
-import { OrdersService } from './order.service';
+
 import { randomInt } from 'crypto';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
+import { OrdersService } from './core/application/services/order.service';
 
 @Controller()
 export class AppController {

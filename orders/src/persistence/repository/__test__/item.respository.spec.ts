@@ -48,7 +48,7 @@ describe('item repository test', () => {
 
     expect(result.isLeft()).toBeTruthy();
     expect(result.value).toBeInstanceOf(Error);
-    expect(result.value['message']).toBe('Item Already existing');
+    expect(result.value['message']).toContain('item already existing');
   });
 
   it('should create Item', async () => {

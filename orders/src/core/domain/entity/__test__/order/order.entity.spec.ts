@@ -25,6 +25,7 @@ describe('Order Entity teste unit', () => {
     expect(order.getItems()).toHaveLength(2);
     expect(order.getPrice()).toBeDefined();
     expect(order.getPrice()).toBe(38.0);
+    expect(order.getDone()).toBeFalsy();
 
     order.addItem([
       ItemEntity.createNew({

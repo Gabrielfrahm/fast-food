@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { OrdersService } from './order.service';
+
 import { ItemController } from './infra/http/rest/controller/item.controller';
 import { ItemService } from './core/application/services/item.service';
 import { ItemRepository } from './persistence/repository/item.repository';
 import { PrismaService } from './persistence/prisma/prisma.service';
+import { OrdersService } from './core/application/services/order.service';
 
 @Module({
   imports: [

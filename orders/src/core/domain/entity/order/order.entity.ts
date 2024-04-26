@@ -6,12 +6,14 @@ export interface OrderEntityProps extends BaseEntityProps {
   items: ItemEntity[];
   price?: number;
   clientName: string;
+  done?: boolean;
 }
 
 export class OrderEntity extends BaseEntity {
   private items: OrderEntityProps['items'];
   private price: OrderEntityProps['price'];
   private clientName: OrderEntityProps['clientName'];
+  private done: OrderEntityProps['done'];
 
   private constructor(data: OrderEntityProps) {
     super(data);
@@ -30,8 +32,10 @@ export class OrderEntity extends BaseEntity {
     return new OrderEntity({
       ...data,
       id,
+      done: false,
       createdAt: new Date(),
       updatedAt: new Date(),
+      deletedAt: null,
     });
   }
 
@@ -41,6 +45,7 @@ export class OrderEntity extends BaseEntity {
       clientName: data.clientName,
       items: data.items,
       price: data.price,
+      done: data.done,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
       deletedAt: data.deletedAt,
@@ -53,6 +58,7 @@ export class OrderEntity extends BaseEntity {
       client_name: this.clientName,
       items: this.items.map((item) => item.serialize()),
       price: this.price,
+      done: this.done,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
       deletedAt: this.deletedAt,
@@ -74,5 +80,13 @@ export class OrderEntity extends BaseEntity {
 
   getClient(): string {
     return this.clientName;
+  }
+
+  getDone(): boolean {
+    return this.done;
+  }
+
+  Done(): void {
+    this.done = true;
   }
 }
