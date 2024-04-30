@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { PrismaService } from './services/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {}

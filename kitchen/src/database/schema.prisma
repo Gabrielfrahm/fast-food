@@ -1,0 +1,40 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model item {
+  id          String        @unique
+  name        String
+  price       Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+  deletedAt   DateTime?
+  order_items order_items[]
+}
+
+model order {
+  id          String        @unique
+  clientName  String
+  price       Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+  deletedAt   DateTime?
+  done        Boolean?
+  order_items order_items[]
+}
+
+model order_items {
+  orderId   String
+  itemId    String
+  createdAt DateTime @default(now())
+  item      item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  order     order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@id([orderId, itemId])
+}

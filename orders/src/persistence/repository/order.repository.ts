@@ -22,7 +22,7 @@ export class OrderRepository {
           id: data.getId(),
           clientName: data.getClient(),
           price: data.getPrice(),
-
+          done: data.getDone(),
           OrderItems: {
             createMany: {
               data: data.getItems().map((item) => ({

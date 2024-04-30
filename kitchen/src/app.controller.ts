@@ -1,4 +1,4 @@
-import { Controller, Get, Sse } from '@nestjs/common';
+import { Controller, Get, Res, Sse } from '@nestjs/common';
 import { AppService } from './app.service';
 import {
   Ctx,
@@ -6,37 +6,60 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { randomInt } from 'crypto';
-import { Observable, Subject, map } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
+import { Response } from 'express';
+import { PrismaService } from './services/prisma/prisma.service';
 
 @Controller()
 export class AppController {
   private orders = [];
-  private ordersUpdates = new Subject<any>();
-  constructor(private readonly appService: AppService) {}
+  private ordersUpdates = new BehaviorSubject<any>([]);
+  constructor(
+    private readonly appService: AppService,
+    private readonly primaService: PrismaService,
+  ) {}
 
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
+  async teste() {
+    if (this.orders.length === 0) {
+      const orders = await this.primaService['order'].findMany();
+      this.orders.push(...orders);
+      this.ordersUpdates.next(this.orders);
+    }
+  }
+
   @MessagePattern('process_order')
   async getPlayers(@Payload() data: any, @Ctx() context: RmqContext) {
     const channel = context.getChannelRef();
     const originalMsg = context.getMessage();
-    console.log(data);
     this.orders.push(data);
     this.ordersUpdates.next(this.orders);
     await channel.ack(originalMsg);
-    return randomInt(10);
   }
 
   @Sse('orders-stream')
   ordersStream(): Observable<MessageEvent> {
+    this.teste().then();
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    return this.ordersUpdates
-      .asObservable()
-      .pipe(map((data) => ({ data: { data } })));
+    return this.ordersUpdates.asObservable().pipe(map((data) => ({ data })));
+  }
+
+  @Get('/list')
+  async index(@Res() response: Response) {
+    // .send(readFileSync(join(__dirname, 'index.html')).toString());
+    response.type('text/html').send(`<script type="text/javascript">
+      const eventSource = new EventSource('/orders-stream');
+      eventSource.onmessage = ({ data }) => {
+        const message = document.createElement('div');
+        message.innerText = data;
+        document.body.appendChild(message);
+      }
+    </script>`);
   }
 }
