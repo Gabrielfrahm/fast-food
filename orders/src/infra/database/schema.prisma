@@ -28,6 +28,7 @@ model Order {
   updatedAt  DateTime     @default(now())
   deletedAt  DateTime?
   OrderItems OrderItems[]
+  done       Boolean?
 
   @@map("order")
 }

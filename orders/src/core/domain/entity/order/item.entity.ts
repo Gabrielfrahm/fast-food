@@ -6,6 +6,11 @@ export interface ItemEntityProps extends BaseEntityProps {
   price: number;
 }
 
+export interface ItemEntityPropsUpdate {
+  name?: string;
+  price?: number;
+}
+
 export class ItemEntity extends BaseEntity {
   private name: ItemEntityProps['name'];
   private price: ItemEntityProps['price'];
@@ -46,6 +51,16 @@ export class ItemEntity extends BaseEntity {
       updatedAt: this.updatedAt,
       deletedAt: this.deletedAt,
     };
+  }
+
+  update(data: ItemEntityPropsUpdate) {
+    if (data.name) {
+      this.name = data.name;
+    }
+
+    if (data.price) {
+      this.price = data.price;
+    }
   }
 
   getName(): string {

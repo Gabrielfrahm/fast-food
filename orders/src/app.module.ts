@@ -8,6 +8,8 @@ import { ItemService } from './core/application/services/item.service';
 import { ItemRepository } from './persistence/repository/item.repository';
 import { PrismaService } from './persistence/prisma/prisma.service';
 import { OrdersService } from './core/application/services/order.service';
+import { OrderController } from './infra/http/rest/controller/order.controller';
+import { OrderRepository } from './persistence/repository/order.repository';
 
 @Module({
   imports: [
@@ -26,12 +28,13 @@ import { OrdersService } from './core/application/services/order.service';
       },
     ]),
   ],
-  controllers: [AppController, ItemController],
+  controllers: [AppController, ItemController, OrderController],
   providers: [
     AppService,
     OrdersService,
     ItemService,
     ItemRepository,
+    OrderRepository,
     PrismaService,
   ],
 })

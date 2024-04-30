@@ -5,6 +5,7 @@ import { ItemEntity } from 'src/core/domain/entity/order/item.entity';
 import { Prisma } from '@prisma/client';
 import { PersistenceException } from 'src/core/domain/exception/persistem.exception';
 import { List } from 'src/shared/list';
+import { ApplicationException } from 'src/core/domain/exception/application.exception';
 
 @Injectable()
 export class ItemRepository {
@@ -71,6 +72,7 @@ export class ItemRepository {
     try {
       const items = await this.model.findMany({
         where: {
+          deletedAt: null,
           ...(name && {
             name: {
               contains: name,
@@ -97,6 +99,7 @@ export class ItemRepository {
 
       const count = await this.model.count({
         where: {
+          deletedAt: null,
           ...(name && {
             name: {
               contains: name,
@@ -130,6 +133,59 @@ export class ItemRepository {
           lastPage: lastPage,
         },
       });
+    } catch (e) {
+      return left(e);
+    }
+  }
+
+  async delete(id: string): Promise<Either<Error, void>> {
+    try {
+      const item = await this.model.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!item) {
+        return left(new ApplicationException('item not found', 404));
+      }
+
+      await this.model.update({
+        where: {
+          id,
+        },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+      return right(null);
+    } catch (e) {
+      return left(e);
+    }
+  }
+
+  async update(item: ItemEntity): Promise<Either<Error, ItemEntity>> {
+    try {
+      const checkItem = await this.model.findMany({
+        where: {
+          name: item.getName(),
+        },
+      });
+
+      if (checkItem[0] && item.getId() !== checkItem[0].id) {
+        return left(new ApplicationException('item already existing', 404));
+      }
+
+      const updateItem = await this.model.update({
+        where: {
+          id: item.getId(),
+        },
+        data: {
+          ...item.serialize(),
+        },
+      });
+
+      return right(ItemEntity.createFrom(updateItem));
     } catch (e) {
       return left(e);
     }

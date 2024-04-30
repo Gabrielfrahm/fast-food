@@ -1,7 +1,6 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { AppService } from './app.service';
 
-import { randomInt } from 'crypto';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
 import { OrdersService } from './core/application/services/order.service';
@@ -19,11 +18,11 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('/order')
-  async createOrder() {
-    await this.ordersService.sendOrder({ ordem: 123, item: randomInt(10) });
-    return { message: 'Order sent successfully!' };
-  }
+  // @Get('/order')
+  // async createOrder() {
+  //   await this.ordersService.sendOrder({ ordem: 123, item: randomInt(10) });
+  //   return { message: 'Order sent successfully!' };
+  // }
 
   @Get('/test')
   getAlgo(): Observable<any> {

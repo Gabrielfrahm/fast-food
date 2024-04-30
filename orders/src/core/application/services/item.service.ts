@@ -9,6 +9,12 @@ export interface ItemCreateCommand {
   price: number;
 }
 
+export interface ItemUpdateCommand {
+  id: string;
+  name?: string;
+  price?: number;
+}
+
 @Injectable()
 export class ItemService {
   constructor(private readonly itemRepository: ItemRepository) {}
@@ -54,5 +60,33 @@ export class ItemService {
     }
 
     return right(repoResponse.value);
+  }
+
+  async delete(id: string): Promise<Either<Error, void>> {
+    const deleteItem = await this.itemRepository.delete(id);
+
+    if (deleteItem.isLeft()) {
+      return left(deleteItem.value);
+    }
+
+    return right(deleteItem.value);
+  }
+
+  async update(data: ItemUpdateCommand): Promise<Either<Error, ItemEntity>> {
+    const item = await this.itemRepository.findById(data.id);
+
+    if (item.isLeft()) {
+      return left(item.value);
+    }
+
+    item.value.update(data);
+
+    const updatedItem = await this.itemRepository.update(item.value);
+
+    if (updatedItem.isLeft()) {
+      return left(updatedItem.value);
+    }
+
+    return right(updatedItem.value);
   }
 }
