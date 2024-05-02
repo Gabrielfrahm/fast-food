@@ -210,4 +210,21 @@ export class OrderRepository {
       return left(e);
     }
   }
+
+  async done(order: OrderEntity): Promise<Either<Error, boolean>> {
+    try {
+      const orderRepo = await this.model.update({
+        where: {
+          id: order.getId(),
+        },
+        data: {
+          done: true,
+        },
+      });
+
+      return right(orderRepo.done);
+    } catch (e) {
+      return left(e);
+    }
+  }
 }

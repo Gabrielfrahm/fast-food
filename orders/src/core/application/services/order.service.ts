@@ -80,6 +80,16 @@ export class OrdersService {
     return right(repoResponse.value);
   }
 
+  async done(order: OrderEntity): Promise<Either<Error, boolean>> {
+    const repoResponse = await this.orderRepository.done(order);
+
+    if (repoResponse.isLeft()) {
+      return left(repoResponse.value);
+    }
+
+    return right(repoResponse.value);
+  }
+
   async sendOrder(order: OrderEntity) {
     console.log('publicado');
     return this.client.emit<OrderEntity>('process_order', order);
