@@ -11,6 +11,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
+import { InfraException } from 'src/core/domain/exception/infra.exception';
 
 @Controller('orders')
 export class OrderController {
@@ -61,7 +62,7 @@ export class OrderController {
           throw order.value;
         }
         if (order.value.getDone()) {
-          throw new Error('order already done');
+          throw new InfraException('order already done', 400);
         }
 
         await this.orderService.done(order.value);
@@ -71,7 +72,7 @@ export class OrderController {
     } catch (error) {
       console.error('Erro ao processar a ordem:', error);
       await channel.nack(originalMsg, false, false);
-      return { status: 'error', message: error.message };
+      return error.message;
     }
   }
 }
